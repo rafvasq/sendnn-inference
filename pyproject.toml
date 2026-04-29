@@ -203,6 +203,8 @@ markers = [
     "prefix_caching: Tests for prefix caching",
     "multi: Tests that require >1 cards",
 
+    "smoke: Model load smoke tests (requires SENDNN_INFERENCE_SMOKE_MODEL env vars)",
+
     # Model types
     "decoder: Tests for decoder models",
     "embedding: Tests for embedding models",
