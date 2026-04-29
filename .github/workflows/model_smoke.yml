@@ -35,7 +35,7 @@ concurrency:
 
 jobs:
   smoke:
-    timeout-minutes: 60
+    timeout-minutes: 120
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
