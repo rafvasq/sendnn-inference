@@ -55,8 +55,8 @@ jobs:
             hf_model_rev: "2b12c2c0088918e76151fd5937b7bba986ef1f98"
           - name: "mistral"
             smoke_test: "test_decoder_model_load_smoke"
-            hf_model: "mistralai/Mistral-Small-3.2-24B-Instruct-2506"
-            hf_model_rev: "95a6d26c4bfb886c58daf9d3f7332c857cb27b43"
+            hf_model: "mistralai/Ministral-3-3B-Instruct-2512-BF16"
+            hf_model_rev: "main"
 
     name: "${{ matrix.name }}"
 
@@ -90,32 +90,9 @@ jobs:
           uv sync --frozen
           uv pip install -v .
 
-      - name: "Standardize HF model names for caching"
-        run: |
-          model="${{ matrix.hf_model }}"
-          revision="${{ matrix.hf_model_rev }}"
-          safe_name="${model//\//--}"
-          echo "model_key=${safe_name}_${revision}"              >> "$GITHUB_ENV"
-          echo "model_path=${HF_HUB_CACHE}/models--${safe_name}" >> "$GITHUB_ENV"
-
-      - name: "Restore HF models cache"
-        id: cache_restore
-        uses: actions/cache/restore@v4
-        with:
-          path: ${{ env.model_path }}
-          key: ${{ runner.os }}-hf-model-${{ env.model_key }}
-
       - name: "Download HF model"
-        if: steps.cache_restore.outputs.cache-hit != 'true'
         run: |
           python3 tools/download_model.py -m "${{ matrix.hf_model }}" -r "${{ matrix.hf_model_rev }}"
-
-      - name: "Save HF models cache"
-        if: github.event_name != 'pull_request' && steps.cache_restore.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
-        with:
-          path: ${{ env.model_path }}
-          key: ${{ runner.os }}-hf-model-${{ env.model_key }}
 
       - name: "Run smoke test"
         env:
